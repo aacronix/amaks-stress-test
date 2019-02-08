@@ -15,13 +15,13 @@
   Тестирование проводилось обычными заходами на [сайт](https://yoshkar-ola.amaks-hotels.ru), а так же созданием элементов инфоблоков (заявка на бронирование конференцзала, отзыв). Это позволило нам проверить какую нагрузку может выдержать сервер и работает ли репликация.
   ### Код
   
-  from locust import HttpLocust, TaskSet, task
+```python
+from locust import HttpLocust, TaskSet, task
 
 class FlowException(Exception):
    pass
 
 class Amaks(TaskSet):
-#    tasks = {index: 1, special: 10, rooms: 2, booking: 4, rest: 1, news: 1}
     @task(2)
     def on_start(self):
 	self.client.get("/")
@@ -31,22 +31,20 @@ class Amaks(TaskSet):
 	self.client.get("/rest/")
 	self.client.get("/news/")
 	self.client.get("/ivisa/")
-#	self.client.get("/404/")
-
     @task(1)
     def check_review_add(self):
 	new_review = {
-	    "review_city": 'LocustCity',
-	    "review_email": 'locust@email.here',
-	    "review_name": 'Locust Test',
+	    "review_city": "LocustCity",
+	    "review_email": "locust@email.here",
+	    "review_name": "Locust Test",
 	    "review_text": "Some text about locusts"
 	}
 
-	review_response = self.client.post('/bitrix/templates/common/ajax/review-add.php?lang=ru&section=yoshkar-ola-ru&event=FORM_REVIEW_YOSHKAR-OLA_RU', json=new_review)
+	review_response = self.client.post("/bitrix/templates/common/ajax/review-add.php?lang=ru&section=yoshkar-ola-ru&event=FORM_REVIEW_YOSHKAR-OLA_RU", json=new_review)
 
 	if review_response.status_code != 200:
 	    raise FlowException('review not created')
-	review_id = review_response.json().get('success')
+	review_id = review_response.json().get("success")
 
     @task(1)
     def check_conference_claim_add(self):
@@ -64,16 +62,17 @@ class Amaks(TaskSet):
 	    "setup" : "Locust style"
 	}
 
-	hall_claim_response = self.client.post('https://yoshkar-ola.webtltest.ru/bitrix/templates/common/ajax/hallclaim-add.php?lang=ru&section=yoshkar-ola-ru&event=HALLCLAIM_YOSHKAR-OLA_RU', json=new_hall_claim)
+	hall_claim_response = self.client.post("https://yoshkar-ola.webtltest.ru/bitrix/templates/common/ajax/hallclaim-add.php?lang=ru&section=yoshkar-ola-ru&event=HALLCLAIM_YOSHKAR-OLA_RU", json=new_hall_claim)
 
 	if hall_claim_response.status_code != 200:
-	    raise FlowException('hall claim not created')
-	hall_claim_id = hall_claim_response.json().get('success')
+	    raise FlowException("hall claim not created")
+	hall_claim_id = hall_claim_response.json().get("success")
 
 class WebsiteAmaks(HttpLocust):
     task_set = Amaks
     min_wait = 1000
     max_wait = 5000
+```
 
 ## Результаты
 ### 100 пользователей, по 10 в секунду (~ 1 минута)
