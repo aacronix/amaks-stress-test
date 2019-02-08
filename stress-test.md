@@ -14,7 +14,7 @@
   ## Тестирование
   Тестирование проводилось обычными заходами на [сайт](https://yoshkar-ola.amaks-hotels.ru), а так же созданием элементов инфоблоков (заявка на бронирование конференцзала, отзыв). Это позволило нам проверить какую нагрузку может выдержать сервер и работает ли репликация.
   ### Код
-  
+
 ```python
 from locust import HttpLocust, TaskSet, task
 
@@ -99,3 +99,80 @@ class WebsiteAmaks(HttpLocust):
 ![alt](/resources/stress-test/70.png)
 * Нагрузка на 2 ноду
 ![alt](/resources/stress-test/80.png)
+
+
+# Проверка двусторонней синхронизации
+
+```bash
+cat create-structure.sh
+mkdir test1
+mkdir test2
+cd test1
+truncate -s 10M foo0
+mkdir test1_1
+mkdir test1_2
+mkdir test1_3
+cd test1_1
+mkdir test1_1_1
+cd ../
+cd test1_2
+mkdir test1_2_1
+cd test1_2_1
+mkdir test1_2_1_1
+cd ../
+cd ../
+cd test1_3
+mkdir test_1_3_1
+cd test_1_3_1
+mkdir test_1_3_1_1
+cd test_1_3_1_1
+mkdir test_1_3_1_1_1
+cd ../
+cd ../
+cd ../
+cd ../
+truncate -s 100M foo1
+cd test2
+mkdir test2_1
+cd test2_1
+mkdir test2_1_1
+cd test2_1_1
+mkdir test2_1_1_1
+mkdir test2_1_1_2
+mkdir test2_1_1_3
+mkdir test2_1_1_4
+mkdir test2_1_1_5
+mkdir test2_1_1_6
+mkdir test2_1_1_7
+mkdir test2_1_1_8
+mkdir test2_1_1_9
+mkdir test2_1_1_10
+mkdir test2_1_1_11
+mkdir test2_1_1_12
+mkdir test2_1_1_13
+mkdir test2_1_1_14
+mkdir test2_1_1_15
+mkdir test2_1_1_16
+mkdir test2_1_1_17
+mkdir test2_1_1_18
+mkdir test2_1_1_19
+mkdir test2_1_1_20
+cd test2_1_1_20
+truncate -s 1M foo1
+truncate -s 2M foo2
+truncate -s 3M foo3
+truncate -s 4M foo4
+truncate -s 5M foo5
+truncate -s 6M foo6
+truncate -s 7M foo7
+truncate -s 8M foo8
+truncate -s 9M foo9
+truncate -s 8M foo8
+truncate -s 7M foo7
+truncate -s 6M foo6
+truncate -s 5M foo5
+truncate -s 4M foo4
+truncate -s 3M foo3
+truncate -s 2M foo2
+truncate -s 1M foo1
+```
